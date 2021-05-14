@@ -26,7 +26,10 @@
         <section>
           <p>React Hooks: Hook Into the Power of Functions</p>
           <br />
-          <p>Quinton Aiken, Cypress.io, @QuintonAiken</p>
+          <p>
+            Quinton Aiken, Cypress.io,
+            <a href="https://twitter.com/QuintonAiken">@QuintonAiken</a>
+          </p>
         </section>
         <section>
           <p>Agenda</p>
@@ -36,6 +39,21 @@
             <li class="fragment">Common Hooks</li>
             <li class="fragment">Best Practices</li>
             <li class="fragment">Exercises</li>
+          </ul>
+        </section>
+        <section>
+          <p>Sources</p>
+          <ul>
+            <li>
+              <a href="https://kentcdodds.com/blog/usememo-and-usecallback"
+                >Kent C Dodds</a
+              >
+            </li>
+            <li>
+              <a href="https://reactjs.org/docs/hooks-reference.html"
+                >React JS Hooks Reference</a
+              >
+            </li>
           </ul>
         </section>
         <section>
@@ -158,7 +176,10 @@
           </ul>
         </section>
         <section>
-          <p>What are React Hooks?</p>
+          <p>
+            What are React Hooks? -
+            <a href="https://twitter.com/prchdk">@prchdk</a>
+          </p>
           <img src="./img/hooks.gif" />
         </section>
         <section>
@@ -330,6 +351,271 @@
         <section>
           <p>Thinking in Hooks</p>
           <img src="./img/hooks.png" />
+        </section>
+        <section>
+          <p>Common Hooks - useState</p>
+          <p>this.setState replacement</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Example() {
+              // Declare a new state variable, which we'll call "count"
+              const [count, setCount] = useState(0);
+
+              return (
+                <div>
+                  <p>You clicked {count} times</p>
+                  <button onClick={() => setCount(count + 1)}>
+                    Click me
+                  </button>
+                </div>
+              );
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useState</p>
+          <p>this.setState replacement</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            class Example extends React.Component {
+              constructor(props) {
+                super(props);
+                this.state = {
+                  count: 0
+                };
+              }
+
+              render() {
+                return (
+                  <div>
+                    <p>You clicked {this.state.count} times</p>
+                    <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+                      Click me
+                    </button>
+                  </div>
+                );
+              }
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useEffect</p>
+          <p>for performing side effects - replacement for lifecycle methods</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Example() {
+              const [count, setCount] = useState(0);
+
+              // Similar to componentDidMount and componentDidUpdate:
+              useEffect(() => {
+                // Update the document title using the browser API
+                document.title = `You clicked ${count} times`;
+              }, [count]);
+
+              return (
+                <div>
+                  <p>You clicked {count} times</p>
+                  <button onClick={() => setCount(count + 1)}>
+                    Click me
+                  </button>
+                </div>
+              );
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useEffect</p>
+          <p>for performing side effects - replacement for lifecycle methods</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            class Example extends React.Component {
+              constructor(props) {
+                super(props);
+                this.state = {
+                  count: 0
+                };
+              }
+
+              componentDidMount() {
+                document.title = `You clicked ${this.state.count} times`;
+              }
+              componentDidUpdate() {
+                document.title = `You clicked ${this.state.count} times`;
+              }
+
+              render() {
+                return (
+                  <div>
+                    <p>You clicked {this.state.count} times</p>
+                    <button onClick={() => this.setState({ count: this.state.count + 1 })}>
+                      Click me
+                    </button>
+                  </div>
+                );
+              }
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useEffect</p>
+          <p>
+            Instead of thinking in terms of “mounting” and “updating”, think
+            that effects happen “after render”
+          </p>
+        </section>
+        <section>
+          <p>Common Hooks - useCallback</p>
+          <p>
+            Returns a memoized callback (callback that only changes if one of
+            the dependencies has changed)
+          </p>
+          <p>Despite name, only use when referential equality is checked</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Foo({bar, baz}) {
+              React.useEffect(() => {
+                const options = {bar, baz}
+                buzz(options)
+              }, [bar, baz])
+              return <div>foobar</div>
+            }
+            function Blub() {
+              const bar = React.useCallback(() => {}, [])
+              const baz = React.useMemo(() => [1, 2, 3], [])
+              return <Foo bar={bar} baz={baz} />
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Best Practices - useEffect</p>
+          <p class="fragment">
+            Optimize performance by using dependency array and skipping effects
+          </p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            useEffect(() => {
+              document.title = `You clicked ${count} times`;
+            }, [count]); // Only re-run the effect if count changes
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Best Practices - useEffect</p>
+          <p class="fragment">
+            Hooks should be small and contain 100% related logic. Don't just
+            have one useEffect hook and put everything in it!
+          </p>
+          <p class="fragment">
+            If dependency array is large, that's a sign it's time to break up
+            the hook into smaller ones
+          </p>
+        </section>
+        <section data-auto-animate>
+          <p>Best Practices - useEffect</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            useEffect(() => {
+              //logic around a, b
+
+              //logic around c,d,e
+
+              //logic around a,f
+            }, [a,b,c,d,e,f]);
+          </script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <p>Best Practices - useEffect</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            useEffect(() => {
+              //logic around a, b
+            }, [a,b]);
+
+            useEffect(() => {
+              //logic around c,d,e
+            }, [c,d,e]);
+
+            useEffect(() => {
+              //logic around a,f
+            }, [a,f]);
+          </script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <p>Best Practices - useEffect</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            const useFoo = (a, b) => {
+              useEffect(() => {
+                //logic around a, b
+              }, [a,b]);
+
+              useEffect(() => {
+                //logic around a,f
+              }, [a,f]);
+            }
+
+            const useBar = (c, d, e) => {
+              useEffect(() => {
+                //logic around c,d,e
+              }, [c,d,e]);
+            }
+
+            function App() {
+              useBar(c, d, e)
+              useFoo(a, b)
+
+              return (...)
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Best Practices - Custom Hooks / Cleanup Functions</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function FriendListItem(props) {
+              const [isOnline, setIsOnline] = useState(null);
+              useEffect(() => {
+                function handleStatusChange(status) {
+                  setIsOnline(status.isOnline);
+                }
+
+                ChatAPI.subscribeToFriendStatus(props.friend.id, handleStatusChange);
+
+                // runs when the component unmounts AND to clean up effects from
+                // the previous render before running the effects next time
+                return () => {
+                  ChatAPI.unsubscribeFromFriendStatus(props.friend.id, handleStatusChange);
+                };
+              }, [props.friend.id]);
+
+              return (
+                <li style={{ color: isOnline ? 'green' : 'black' }}>
+                  {props.friend.name}
+                </li>
+              );
+            }
+          </script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <p>Best Practices - Custom Hooks</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function FriendListItem(props) {
+              const isOnline = useFriendStatus(props.friend.id);
+
+              return (
+                <li style={{ color: isOnline ? 'green' : 'black' }}>
+                  {props.friend.name}
+                </li>
+              );
+            }
+          </script></code></pre>
+        </section>
+        <section data-auto-animate>
+          <p>Best Practices - Rules of Hooks</p>
+          <ul>
+            <li>
+              Only call hooks at the Top Level - no loops, conditions, callback
+              functions [place all hooks together at the top of a component]
+            </li>
+            <li>
+              Only call hooks from react functions - React function components
+              and custom Hooks
+            </li>
+            <li>
+              Use the eslint-plugin-react-hooks to enforce these two rules
+            </li>
+          </ul>
         </section>
       </div>
     </div>
