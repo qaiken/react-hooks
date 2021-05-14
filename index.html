@@ -30,7 +30,6 @@
         </section>
         <section>
           <p>Agenda</p>
-          <br />
           <ul>
             <li class="fragment">What are React Hooks?</li>
             <li class="fragment">Common Hooks</li>
@@ -47,7 +46,7 @@
             What is the difference between a class component and a functional
             component? (Common interview question)
           </p>
-          <br />
+          <p>(Common interview question)</p>
           <ul>
             <li class="fragment">
               class components use classes (this) and functional components are
@@ -62,7 +61,6 @@
         </section>
         <section>
           <p>What are React Hooks?</p>
-          <br />
           <ul>
             <li class="fragment">
               functions that allow us to <i>hook</i> into React state and
@@ -82,8 +80,17 @@
         </section>
         <section>
           <p>Render Props</p>
-          <br />
-          <img src="img/render-props.png" />
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function App() {
+              return (
+                <DataProvider
+                  render={data => (
+                    <h1>Hello {data.target}</h1>
+                  )}
+                />
+              )
+            }
+          </script></code></pre>
           <ul>
             <li class="fragment">
               A component with a render prop takes a function that returns a
