@@ -32,21 +32,28 @@
           <p>Agenda</p>
           <ul>
             <li class="fragment">What are React Hooks?</li>
-            <li class="fragment">Common Hooks</li>
             <li class="fragment">Thinking in Hooks</li>
-            <li class="fragment">Hooks Best Practices</li>
+            <li class="fragment">Common Hooks</li>
+            <li class="fragment">Best Practices</li>
             <li class="fragment">Exercises</li>
           </ul>
         </section>
         <section>
           <p>What are React Hooks?</p>
+          <ul>
+            <li class="fragment">
+              functions that allow us to <i>hook</i> into React state and
+              lifecycle features from function components
+            </li>
+          </ul>
         </section>
         <section>
-          <p>
+          <p>What are React Hooks?</p>
+          <p class="fragment">
             What is the difference between a class component and a functional
             component?
           </p>
-          <p>(Common interview question)</p>
+          <p class="fragment">(Common interview question)</p>
           <ul>
             <li class="fragment">
               class components use classes (this) and functional components are
@@ -61,17 +68,103 @@
         </section>
         <section>
           <p>What are React Hooks?</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+              class App extends Component {
+                state = {
+                  name: ''
+                }
+
+                alertName = () => {
+                  alert(this.state.name);
+                };
+
+                handleNameInput = e => {
+                  this.setState({ name: e.target.value });
+                };
+
+                render() {
+                  return (
+                    <div>
+                      <h3>This is a Class Component</h3>
+                      <input
+                        type="text"
+                        onChange={this.handleNameInput}
+                        value={this.state.name}
+                        placeholder="Your Name"
+                      />
+                      <button onClick={this.alertName}>
+                        Alert
+                      </button>
+                    </div>
+                  );
+                }
+              }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>What are React Hooks?</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function App() {
+              const [name, setName] = useState('John Doe');
+
+              const alertName = () => {
+                alert(name);
+              };
+
+              const handleNameInput = e => {
+                setName(e.target.value);
+              };
+
+              return (
+                <div>
+                  <h3>This is a Functional Component</h3>
+                  <input
+                    type="text"
+                    onChange={handleNameInput}
+                    value={name}
+                    placeholder="Your Name"
+                  />
+                  <button onClick={alertName}>
+                    Alert
+                  </button>
+                </div>
+              );
+            };
+          </script></code></pre>
+        </section>
+        <section>
+          <p>What are React Hooks?</p>
+          <p>Syntactic Benefits:</p>
           <ul>
             <li class="fragment">
-              functions that allow us to <i>hook</i> into React state and
-              lifecycle features from function components
+              no more deciding whether to write a function or a class component
+              / convert later
             </li>
             <li class="fragment">
-              allows us to ditch all uses of class components and <b>this</b>
+              allows us to ditch all uses of class components, <i>this</i>, and
+              method bindings (this.handleClick = this.handleClick.bind(this))
             </li>
+          </ul>
+        </section>
+        <section>
+          <p>What are React Hooks?</p>
+          <p>Logical Benefits:</p>
+          <ul>
             <li class="fragment">
-              they're easier to reason about since they're just functions
+              blocks of logic are easier to reason about since they're just
+              functions instead of being spread / intertwined across lifecycle
+              methods.
             </li>
+          </ul>
+        </section>
+        <section>
+          <p>What are React Hooks?</p>
+          <img src="./img/hooks.gif" />
+        </section>
+        <section>
+          <p>What are React Hooks?</p>
+          <p>Logical Benefits:</p>
+          <ul>
             <li class="fragment">
               results in extremely simplified code composition and reuse. no
               more HOCs or render props
@@ -79,6 +172,7 @@
           </ul>
         </section>
         <section>
+          <p>Thinking in Hooks</p>
           <p>Render Props</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function App() {
@@ -91,6 +185,10 @@
               )
             }
           </script></code></pre>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <p>Render Props</p>
           <ul>
             <li class="fragment">
               A component with a render prop takes a function that returns a
@@ -101,7 +199,137 @@
               Hard to distinguish between regular components and render-prop
               components that are used for sharing logic
             </li>
+            <li class="fragment">
+              sooner or later you’ll face a problem of nesting components within
+              multiple render prop callbacks: <i>render props callback hell</i>
+            </li>
           </ul>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <p>Render Props</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function DetectCity() {
+              return (
+                <AsyncCoords
+                  render={({ lat, long }) => {
+                    return (
+                      <AsyncCity
+                        lat={lat}
+                        long={long}
+                        render={city => {
+                          if (city == null) {
+                            return <div>Unable to detect city.</div>;
+                          }
+                          return <div>You might be in {city}.</div>;
+                        }}
+                      />
+                    );
+                  }}
+                />
+              );
+            }
+
+            <DetectCity />
+          </script></code></pre>
+          <p class="fragment">Render props callback hell</p>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <p>Higher Order Components (HOCs)</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            // This function takes a component...
+            function withSubscription(WrappedComponent, selectData) {
+              // ...and returns another component...
+              return class extends React.Component {
+                constructor(props) {
+                  super(props);
+                  this.handleChange = this.handleChange.bind(this);
+                  this.state = {
+                    data: selectData(DataSource, props)
+                  };
+                }
+
+                componentDidMount() {
+                  // ... that takes care of the subscription...
+                  DataSource.addChangeListener(this.handleChange);
+                }
+
+                componentWillUnmount() {
+                  DataSource.removeChangeListener(this.handleChange);
+                }
+
+                handleChange() {
+                  this.setState({
+                    data: selectData(DataSource, this.props)
+                  });
+                }
+
+                render() {
+                  // ... and renders the wrapped component with the fresh data!
+                  // Notice that we pass through any additional props
+                  return <WrappedComponent data={this.state.data} {...this.props} />;
+                }
+              };
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <p>Higher Order Components (HOCs)</p>
+          <ul>
+            <li>
+              a higher-order component is a function that takes a component and
+              returns a new component.
+            </li>
+            <li>can I have nested HOCs?</li>
+          </ul>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <p>Higher Order Components (HOCs)</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            // Instead of doing this...
+            const EnhancedComponent = withRouter(connect(commentSelector)(WrappedComponent))
+
+            // ... you can use a function composition utility
+            // compose(f, g, h) is the same as (...args) => f(g(h(...args)))
+            const enhance = compose(
+              // These are both single-argument HOCs
+              withRouter,
+              connect(commentSelector)
+            )
+            const EnhancedComponent = enhance(WrappedComponent)
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <p>Higher Order Components (HOCs)</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function App() {
+              return (
+                <withRedux>
+                  <withAuth>
+                    <withLogging>
+                      <withLayout>
+                        <MyPageComponent />
+                      </withLayout>
+                    </withLogging>
+                  </withAuth>
+                </withRedux>
+              )
+            }
+          </script></code></pre>
+          <ul>
+            <li class="fragment">implicit component hierarchy hell</li>
+            <li class="fragment">
+              does order matter? where do I put another HOC?
+            </li>
+          </ul>
+        </section>
+        <section>
+          <p>Thinking in Hooks</p>
+          <img src="./img/hooks.png" />
         </section>
       </div>
     </div>
