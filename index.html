@@ -66,26 +66,24 @@
           </ul>
         </section>
         <section>
-          <p>What are React Hooks?</p>
-          <p class="fragment">
-            What is the difference between a class component and a functional
+          <p>
+            What is the difference between a class component and a function
             component?
           </p>
-          <p class="fragment">(Common interview question)</p>
+          <p>(Common interview question)</p>
           <ul>
             <li class="fragment">
-              class components use classes (this) and functional components are
+              class components use classes (this) and function components are
               just functions
             </li>
             <li class="fragment">
               class components have <b>lifecycle methods</b> (render,
               componentDidMount, componentDidUpdate, etc)
             </li>
-            <li class="fragment">functional components are <b>stateless</b></li>
+            <li class="fragment">function components were <b>stateless</b></li>
           </ul>
         </section>
         <section>
-          <p>What are React Hooks?</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
               class App extends Component {
                 state = {
@@ -120,29 +118,30 @@
           </script></code></pre>
         </section>
         <section>
-          <p>What are React Hooks?</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function App() {
-              const [name, setName] = useState('John Doe');
-
-              const alertName = () => {
-                alert(name);
-              };
+            function useNameInput(initialName) {
+              const [name, setName] = useState(initialName);
 
               const handleNameInput = e => {
                 setName(e.target.value);
               };
 
+              return {handleNameInput, name}
+            }
+
+            function App() {
+              const {name, handleNameInput} = useNameInput('')
+
               return (
                 <div>
-                  <h3>This is a Functional Component</h3>
+                  <h3>This is a Function Component</h3>
                   <input
                     type="text"
                     onChange={handleNameInput}
                     value={name}
                     placeholder="Your Name"
                   />
-                  <button onClick={alertName}>
+                  <button onClick={() => alert(name)}>
                     Alert
                   </button>
                 </div>
@@ -151,7 +150,6 @@
           </script></code></pre>
         </section>
         <section>
-          <p>What are React Hooks?</p>
           <p>Syntactic Benefits:</p>
           <ul>
             <li class="fragment">
@@ -165,36 +163,33 @@
           </ul>
         </section>
         <section>
-          <p>What are React Hooks?</p>
           <p>Logical Benefits:</p>
           <ul>
             <li class="fragment">
               blocks of logic are easier to reason about since they're just
-              functions instead of being spread / intertwined across lifecycle
-              methods.
+              functions instead of being spread / intertwined across lifecycle /
+              class methods.
             </li>
           </ul>
         </section>
         <section>
-          <p>
-            What are React Hooks? -
-            <a href="https://twitter.com/prchdk">@prchdk</a>
-          </p>
           <img src="./img/hooks.gif" />
+          <a href="https://twitter.com/prchdk">@prchdk</a>
         </section>
         <section>
-          <p>What are React Hooks?</p>
           <p>Logical Benefits:</p>
           <ul>
             <li class="fragment">
               results in extremely simplified code composition and reuse. no
-              more HOCs or render props for shared logic (only shared UI
-              components)
+              more render props or HOCs for shared logic (still useful for
+              shared UI components)
             </li>
           </ul>
         </section>
         <section>
           <p>Thinking in Hooks</p>
+        </section>
+        <section>
           <p>Render Props</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function App() {
@@ -209,7 +204,6 @@
           </script></code></pre>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <p>Render Props</p>
           <ul>
             <li class="fragment">
@@ -219,16 +213,16 @@
             </li>
             <li class="fragment">
               Hard to distinguish between regular components and render-prop
-              components that are used for sharing logic
+              components that are used for sharing logic [components used for
+              logic reuse AND UI reuse]
             </li>
             <li class="fragment">
-              sooner or later you’ll face a problem of nesting components within
-              multiple render prop callbacks: <i>render props callback hell</i>
+              problems with nesting components within multiple render prop
+              callbacks: <i>render props callback hell</i>
             </li>
           </ul>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <p>Render Props</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function DetectCity() {
@@ -257,7 +251,6 @@
           <p class="fragment">Render props callback hell</p>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <p>Higher Order Components (HOCs)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             // This function takes a component...
@@ -297,18 +290,16 @@
           </script></code></pre>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <p>Higher Order Components (HOCs)</p>
           <ul>
             <li>
               a higher-order component is a function that takes a component and
               returns a new component.
             </li>
-            <li>can I have nested HOCs?</li>
+            <li class="fragment">can I have nested HOCs?</li>
           </ul>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <p>Higher Order Components (HOCs)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             // Instead of doing this...
@@ -325,7 +316,6 @@
           </script></code></pre>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <p>Higher Order Components (HOCs)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function App() {
@@ -350,10 +340,12 @@
           </ul>
         </section>
         <section>
-          <p>Thinking in Hooks</p>
           <img src="./img/hooks.png" />
         </section>
         <section>
+          <p>Common Hooks</p>
+        </section>
+        <section data-auto-animate>
           <p>Common Hooks - useState</p>
           <p>this.setState replacement</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
@@ -372,9 +364,8 @@
             }
           </script></code></pre>
         </section>
-        <section>
+        <section data-auto-animate>
           <p>Common Hooks - useState</p>
-          <p>this.setState replacement</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             class Example extends React.Component {
               constructor(props) {
@@ -397,25 +388,7 @@
             }
           </script></code></pre>
         </section>
-        <section>
-          <p>Common Hooks - useEffect</p>
-          <p class="fragment">
-            for performing side effects - equivalent for lifecycle methods
-            (componentDidMount, componentDidUpdate, componentWillUnmount)
-          </p>
-          <p class="fragment">
-            shouldComponentUpdate's equivalent is React.memo (shallowly compares
-            props by default but can pass custom function)
-          </p>
-          <pre
-            class="fragment"
-          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            const Button = React.memo((props) => {
-              // your component
-            });
-          </script></code></pre>
-        </section>
-        <section>
+        <section data-auto-animate>
           <p>Common Hooks - useEffect</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function Example() {
@@ -438,7 +411,7 @@
             }
           </script></code></pre>
         </section>
-        <section>
+        <section data-auto-animate>
           <p>Common Hooks - useEffect</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             class Example extends React.Component {
@@ -471,6 +444,24 @@
         </section>
         <section>
           <p>Common Hooks - useEffect</p>
+          <p class="fragment">
+            for performing side effects - equivalent for lifecycle methods
+            (componentDidMount, componentDidUpdate, componentWillUnmount)
+          </p>
+          <p class="fragment">
+            shouldComponentUpdate's equivalent is React.memo (shallowly compares
+            props by default but can pass custom function)
+          </p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            const Button = React.memo((props) => {
+              // your component
+            }, function areEqual(prevProps, nextProps) { return true });
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useEffect</p>
           <p>
             Instead of thinking in terms of “mounting” and “updating”, think
             that effects happen “after render”
@@ -478,42 +469,33 @@
         </section>
         <section>
           <p>Common Hooks - useCallback</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Foo({bar}) {
+              React.useEffect(() => {
+                const options = {bar}
+                buzz(options)
+              }, [bar])
+
+              return <div>foobar</div>
+            }
+            function Blub() {
+              const bar = React.useCallback(() => {}, [])
+              return <Foo bar={bar} />
+            }
+          </script></code></pre>
           <ul>
             <li class="fragment">
               Returns a memoized callback (callback that only changes if one of
               the dependencies has changed)
             </li>
             <li class="fragment">
-              Despite name, only use when referential equality is checked
+              Despite name, only use when referential equality is a concern
             </li>
           </ul>
-          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function Foo({bar, baz}) {
-              React.useEffect(() => {
-                const options = {bar, baz}
-                buzz(options)
-              }, [bar, baz])
-              return <div>foobar</div>
-            }
-            function Blub() {
-              const bar = React.useCallback(() => {}, [])
-              const baz = React.useMemo(() => [1, 2, 3], [])
-              return <Foo bar={bar} baz={baz} />
-            }
-          </script></code></pre>
         </section>
         <section>
           <p>Common Hooks - useCallback</p>
-          <ul>
-            <li class="fragment">
-              Used as a callback ref - run some code when React attaches or
-              detaches a ref to a DOM node
-            </li>
-            <li class="fragment">
-              useRef doesn’t notify us about changes to the current ref value
-            </li>
-            <li class="fragment">useful for measuring DOM nodes</li>
-          </ul>
+          <p>callback ref</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function MeasureExample() {
               const [rect, ref] = useClientRect();
@@ -539,12 +521,20 @@
           </script></code></pre>
         </section>
         <section>
-          <p>Common Hooks - useMemo</p>
+          <p>Common Hooks - useCallback</p>
           <ul>
             <li class="fragment">
-              used to memoize computationally expensive calculations
+              Used as a callback ref - run some code when React attaches or
+              detaches a ref to a DOM node
             </li>
+            <li class="fragment">
+              useRef doesn’t notify us about changes to the current ref value
+            </li>
+            <li class="fragment">useful for measuring DOM nodes</li>
           </ul>
+        </section>
+        <section>
+          <p>Common Hooks - useMemo</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function RenderPrimes({iterations, multiplier}) {
               const primes = React.useMemo(() => calculatePrimes(iterations, multiplier), [
@@ -554,19 +544,9 @@
               return <div>Primes! {primes}</div>
             }
           </script></code></pre>
-        </section>
-        <section>
-          <p>Common Hooks - useRef</p>
           <ul>
             <li class="fragment">
-              Used to hold a mutable value (or function) that persists render to
-              render and, when changed, does NOT trigger a re-render.
-            </li>
-            <li class="fragment">
-              Can be thought of as class instance variables / methods
-            </li>
-            <li class="fragment">
-              Useful for working with web apis (setInterval, addEventListener)
+              used to memoize computationally expensive calculations
             </li>
           </ul>
         </section>
@@ -602,6 +582,21 @@
               }, [delay]);
             }
           </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useRef</p>
+          <ul>
+            <li class="fragment">
+              Used to hold a mutable value (or function) that persists render to
+              render and, when changed, does NOT trigger a re-render.
+            </li>
+            <li class="fragment">
+              Can be thought of as class instance variables / methods
+            </li>
+            <li class="fragment">
+              Useful for working with web apis (setInterval, addEventListener)
+            </li>
+          </ul>
         </section>
         <section>
           <p>Common Hooks - useRef</p>
@@ -657,6 +652,9 @@
           </script></code></pre>
         </section>
         <section>
+          <p>Best Practices</p>
+        </section>
+        <section>
           <p>Best Practices - useState</p>
           <p class="fragment">
             split state into multiple state variables based on which values tend
@@ -665,13 +663,16 @@
           <pre
             class="fragment"
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+          //instead of this...
+          const [state, setState] = useState({ left: 0, top: 0, width: 100, height: 100 });
+          setState(state => ({ ...state, left: e.pageX, top: e.pageY }));
+        </script></code></pre>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            //do this
             const [position, setPosition] = useState({ left: 0, top: 0 });
             const [size, setSize] = useState({ width: 100, height: 100 });
-
-            //instead of
-
-            const [state, setState] = useState({ left: 0, top: 0, width: 100, height: 100 });
-            setState(state => ({ ...state, left: e.pageX, top: e.pageY }));
           </script></code></pre>
         </section>
         <section>
@@ -802,16 +803,19 @@
         <section data-auto-animate>
           <p>Best Practices - Rules of Hooks</p>
           <ul>
-            <li>
+            <li class="fragment">
               Only call hooks at the Top Level - no loops, conditions, callback
               functions [place all hooks together at the top of a component]
             </li>
-            <li>
+            <li class="fragment">
               Only call hooks from react functions - React function components
               and custom Hooks
             </li>
-            <li>
+            <li class="fragment">
               Use the eslint-plugin-react-hooks to enforce these two rules
+            </li>
+            <li class="fragment">
+              Custom hooks should start with 'use' as a prefix
             </li>
           </ul>
         </section>
