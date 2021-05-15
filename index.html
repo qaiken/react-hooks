@@ -188,7 +188,8 @@
           <ul>
             <li class="fragment">
               results in extremely simplified code composition and reuse. no
-              more HOCs or render props
+              more HOCs or render props for shared logic (only shared UI
+              components)
             </li>
           </ul>
         </section>
@@ -398,7 +399,24 @@
         </section>
         <section>
           <p>Common Hooks - useEffect</p>
-          <p>for performing side effects - replacement for lifecycle methods</p>
+          <p class="fragment">
+            for performing side effects - equivalent for lifecycle methods
+            (componentDidMount, componentDidUpdate, componentWillUnmount)
+          </p>
+          <p class="fragment">
+            shouldComponentUpdate's equivalent is React.memo (shallowly compares
+            props by default but can pass custom function)
+          </p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            const Button = React.memo((props) => {
+              // your component
+            });
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useEffect</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function Example() {
               const [count, setCount] = useState(0);
@@ -422,7 +440,6 @@
         </section>
         <section>
           <p>Common Hooks - useEffect</p>
-          <p>for performing side effects - replacement for lifecycle methods</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             class Example extends React.Component {
               constructor(props) {
@@ -461,11 +478,15 @@
         </section>
         <section>
           <p>Common Hooks - useCallback</p>
-          <p>
-            Returns a memoized callback (callback that only changes if one of
-            the dependencies has changed)
-          </p>
-          <p>Despite name, only use when referential equality is checked</p>
+          <ul>
+            <li class="fragment">
+              Returns a memoized callback (callback that only changes if one of
+              the dependencies has changed)
+            </li>
+            <li class="fragment">
+              Despite name, only use when referential equality is checked
+            </li>
+          </ul>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function Foo({bar, baz}) {
               React.useEffect(() => {
@@ -482,6 +503,178 @@
           </script></code></pre>
         </section>
         <section>
+          <p>Common Hooks - useCallback</p>
+          <ul>
+            <li class="fragment">
+              Used as a callback ref - run some code when React attaches or
+              detaches a ref to a DOM node
+            </li>
+            <li class="fragment">
+              useRef doesn’t notify us about changes to the current ref value
+            </li>
+            <li class="fragment">useful for measuring DOM nodes</li>
+          </ul>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function MeasureExample() {
+              const [rect, ref] = useClientRect();
+              return (
+                <>
+                  <h1 ref={ref}>Hello, world</h1>
+                  {rect !== null &&
+                    <h2>The above header is {Math.round(rect.height)}px tall</h2>
+                  }
+                </>
+              );
+            }
+
+            function useClientRect() {
+              const [rect, setRect] = useState(null);
+              const ref = useCallback(node => {
+                if (node !== null) {
+                  setRect(node.getBoundingClientRect());
+                }
+              }, []);
+              return [rect, ref];
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useMemo</p>
+          <ul>
+            <li class="fragment">
+              used to memoize computationally expensive calculations
+            </li>
+          </ul>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function RenderPrimes({iterations, multiplier}) {
+              const primes = React.useMemo(() => calculatePrimes(iterations, multiplier), [
+                iterations,
+                multiplier,
+              ])
+              return <div>Primes! {primes}</div>
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useRef</p>
+          <ul>
+            <li class="fragment">
+              Used to hold a mutable value (or function) that persists render to
+              render and, when changed, does NOT trigger a re-render.
+            </li>
+            <li class="fragment">
+              Can be thought of as class instance variables / methods
+            </li>
+            <li class="fragment">
+              Useful for working with web apis (setInterval, addEventListener)
+            </li>
+          </ul>
+        </section>
+        <section>
+          <p>Common Hooks - useRef</p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Counter() {
+              const [count, setCount] = useState(0);
+
+              useInterval(() => {
+                setCount(count + 1);
+              }, 1000);
+
+              return <h1>{count}</h1>;
+            }
+
+            function useInterval(callback, delay) {
+              const savedCallback = useRef();
+
+              useEffect(() => {
+                savedCallback.current = callback;
+              });
+
+              useEffect(() => {
+                function tick() {
+                  savedCallback.current();
+                }
+
+                let id = setInterval(tick, delay);
+                return () => clearInterval(id);
+              }, [delay]);
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useRef</p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            export function useOnScroll({
+              onScroll,
+              delay = 500,
+            }: {
+              onScroll(): void;
+              delay?: number;
+            }) {
+              const debouncedOnScroll = React.useRef(() => {});
+
+              React.useEffect(() => {
+                debouncedOnScroll.current = debounce(onScroll, delay);
+              }, [delay, onScroll]);
+
+              React.useEffect(() => {
+                function onWindowEvent() {
+                  debouncedOnScroll.current();
+                }
+
+                window.addEventListener("resize", onWindowEvent);
+
+                return () => {
+                  window.removeEventListener("resize", onWindowEvent);
+                };
+              }, []);
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useRef</p>
+          <p class="fragment">previous props or state</p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Counter() {
+              const [count, setCount] = useState(0);
+              const prevCount = usePrevious(count);
+              return <h1>Now: {count}, before: {prevCount}</h1>;
+            }
+
+            function usePrevious(value) {
+              const ref = useRef();
+              useEffect(() => {
+                ref.current = value;
+              });
+              return ref.current;
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Best Practices - useState</p>
+          <p class="fragment">
+            split state into multiple state variables based on which values tend
+            to change together
+          </p>
+          <pre
+            class="fragment"
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            const [position, setPosition] = useState({ left: 0, top: 0 });
+            const [size, setSize] = useState({ width: 100, height: 100 });
+
+            //instead of
+
+            const [state, setState] = useState({ left: 0, top: 0, width: 100, height: 100 });
+            setState(state => ({ ...state, left: e.pageX, top: e.pageY }));
+          </script></code></pre>
+        </section>
+        <section>
           <p>Best Practices - useEffect</p>
           <p class="fragment">
             Optimize performance by using dependency array and skipping effects
@@ -489,6 +682,9 @@
           <pre
             class="fragment"
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            useEffect(() => {}); // Runs on every re-render
+            useEffect(() => {}, []); // Only runs once when the component mounts
+
             useEffect(() => {
               document.title = `You clicked ${count} times`;
             }, [count]); // Only re-run the effect if count changes
@@ -496,14 +692,16 @@
         </section>
         <section>
           <p>Best Practices - useEffect</p>
-          <p class="fragment">
-            Hooks should be small and contain 100% related logic. Don't just
-            have one useEffect hook and put everything in it!
-          </p>
-          <p class="fragment">
-            If dependency array is large, that's a sign it's time to break up
-            the hook into smaller ones
-          </p>
+          <ul>
+            <li class="fragment">
+              Hooks should be small and contain related logic. Don't just have
+              one useEffect hook and put everything in it!
+            </li>
+            <li class="fragment">
+              If dependency array is large, that's a sign it's time to break up
+              the hook into smaller ones
+            </li>
+          </ul>
         </section>
         <section data-auto-animate>
           <p>Best Practices - useEffect</p>
