@@ -30,6 +30,13 @@
             Quinton Aiken, Cypress.io,
             <a href="https://twitter.com/QuintonAiken">@QuintonAiken</a>
           </p>
+          <br />
+          <p>
+            Slides:
+            <a href="https://github.com/qaiken/react-hooks"
+              >github.com/qaiken/react-hooks</a
+            >
+          </p>
         </section>
         <section>
           <p>Agenda</p>
@@ -45,14 +52,18 @@
           <p>Sources</p>
           <ul>
             <li>
-              <a href="https://kentcdodds.com/blog/usememo-and-usecallback"
-                >Kent C Dodds</a
-              >
-            </li>
-            <li>
               <a href="https://reactjs.org/docs/hooks-reference.html"
                 >React JS Hooks Reference</a
               >
+            </li>
+            <li>
+              <a href="https://twitter.com/kentcdodds">Kent C Dodds</a>
+            </li>
+            <li>
+              <a href="https://twitter.com/panzerdp">Dmitri Pavlutin</a>
+            </li>
+            <li>
+              <a href="https://usehooks-typescript.com/">usehooks-typescript</a>
             </li>
           </ul>
         </section>
@@ -621,10 +632,10 @@
                   debouncedOnScroll.current();
                 }
 
-                window.addEventListener("resize", onWindowEvent);
+                window.addEventListener("scroll", onWindowEvent);
 
                 return () => {
-                  window.removeEventListener("resize", onWindowEvent);
+                  window.removeEventListener("scroll", onWindowEvent);
                 };
               }, []);
             }
@@ -820,7 +831,7 @@
           </ul>
         </section>
         <section data-auto-animate>
-          <p>Exercises</p>
+          <p>Exercises (10 mins)</p>
           <ul>
             <li>
               <a href="https://codesandbox.io/s/class-to-hooks-xsdqr"
@@ -837,7 +848,6 @@
                 >Unwrapping Render Props using Hooks</a
               >: https://codesandbox.io/s/unwrap-render-props-mc2px
             </li>
-            <li>10 mins</li>
           </ul>
         </section>
         <section data-auto-animate>
