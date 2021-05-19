@@ -28,12 +28,12 @@
           <br />
           <p>
             Quinton Aiken, Cypress.io,
-            <a href="https://twitter.com/QuintonAiken">@QuintonAiken</a>
+            <a target="_blank" href="https://twitter.com/QuintonAiken">@QuintonAiken</a>
           </p>
           <br />
           <p>
             Slides:
-            <a href="https://github.com/qaiken/react-hooks"
+            <a target="_blank" href="https://github.com/qaiken/react-hooks"
               >github.com/qaiken/react-hooks</a
             >
           </p>
@@ -45,25 +45,25 @@
             <li class="fragment">Thinking in Hooks</li>
             <li class="fragment">Common Hooks</li>
             <li class="fragment">Best Practices</li>
-            <li class="fragment">Exercises & Questions [20 mins]</li>
+            <li class="fragment">Exercises & Questions</li>
           </ul>
         </section>
         <section>
           <p>Sources</p>
           <ul>
             <li>
-              <a href="https://reactjs.org/docs/hooks-reference.html"
+              <a target="_blank" href="https://reactjs.org/docs/hooks-reference.html"
                 >React JS Hooks Reference</a
               >
             </li>
             <li>
-              <a href="https://twitter.com/kentcdodds">Kent C Dodds</a>
+              <a target="_blank" href="https://twitter.com/kentcdodds">Kent C Dodds</a>
             </li>
             <li>
-              <a href="https://twitter.com/panzerdp">Dmitri Pavlutin</a>
+              <a target="_blank" href="https://twitter.com/panzerdp">Dmitri Pavlutin</a>
             </li>
             <li>
-              <a href="https://usehooks-typescript.com/">usehooks-typescript</a>
+              <a target="_blank" href="https://usehooks-typescript.com/">usehooks-typescript</a>
             </li>
           </ul>
         </section>
@@ -92,6 +92,7 @@
               componentDidMount, componentDidUpdate, etc)
             </li>
             <li class="fragment">function components were <b>stateless</b></li>
+            <li class="fragment">confusion around when to write functions or classes for UI components [No performance benefits. Start with function. Need to add state later? Refactor to class.]</b></li>
           </ul>
         </section>
         <section>
@@ -168,7 +169,7 @@
               / convert later
             </li>
             <li class="fragment">
-              allows us to ditch all uses of class components, <i>this</i>, and
+              allows us to ditch all uses of <i>this</i>, and
               method bindings (this.handleClick = this.handleClick.bind(this))
             </li>
           </ul>
@@ -192,13 +193,31 @@
           <ul>
             <li class="fragment">
               results in extremely simplified code composition and reuse. no
-              more render props or HOCs for shared logic (still useful for
-              shared UI components)
+              more render props or HOCs for shared logic (still useful for UI component composition)
             </li>
           </ul>
         </section>
         <section>
           <p>Thinking in Hooks</p>
+        </section>
+        <section>
+          <p>Render Props</p>
+          <ul>
+            <li class="fragment">
+              A component with a render prop takes a function that returns a
+              React element and calls it instead of implementing its own render
+              logic
+            </li>
+            <li class="fragment">
+              Hard to distinguish between UI components and render-prop
+              components that are used for sharing logic [components used for
+              logic reuse, UI reuse and mixture of both]
+            </li>
+            <li class="fragment">
+              problems with nesting components within multiple render prop
+              callbacks: <i>render props callback hell</i>
+            </li>
+          </ul>
         </section>
         <section>
           <p>Render Props</p>
@@ -213,25 +232,6 @@
               )
             }
           </script></code></pre>
-        </section>
-        <section>
-          <p>Render Props</p>
-          <ul>
-            <li class="fragment">
-              A component with a render prop takes a function that returns a
-              React element and calls it instead of implementing its own render
-              logic
-            </li>
-            <li class="fragment">
-              Hard to distinguish between regular components and render-prop
-              components that are used for sharing logic [components used for
-              logic reuse AND UI reuse]
-            </li>
-            <li class="fragment">
-              problems with nesting components within multiple render prop
-              callbacks: <i>render props callback hell</i>
-            </li>
-          </ul>
         </section>
         <section>
           <p>Render Props</p>
@@ -263,8 +263,18 @@
         </section>
         <section>
           <p>Higher Order Components (HOCs)</p>
+          <ul>
+            <li>
+              a higher-order component is a function that takes a component and
+              returns a new component.
+            </li>
+            <li class="fragment">can I have nested HOCs?</li>
+          </ul>
+        </section>
+        <section>
+          <p>Higher Order Components (HOCs)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            // This function takes a component...
+            // A function that takes a component...
             function withSubscription(WrappedComponent, selectData) {
               // ...and returns another component...
               return class extends React.Component {
@@ -302,16 +312,6 @@
         </section>
         <section>
           <p>Higher Order Components (HOCs)</p>
-          <ul>
-            <li>
-              a higher-order component is a function that takes a component and
-              returns a new component.
-            </li>
-            <li class="fragment">can I have nested HOCs?</li>
-          </ul>
-        </section>
-        <section>
-          <p>Higher Order Components (HOCs)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             // Instead of doing this...
             const EnhancedComponent = withRouter(connect(commentSelector)(WrappedComponent))
@@ -344,7 +344,7 @@
             }
           </script></code></pre>
           <ul>
-            <li class="fragment">implicit component hierarchy hell</li>
+            <li>hidden component hierarchy hell</li>
             <li class="fragment">
               does order matter? where do I put another HOC?
             </li>
@@ -361,7 +361,6 @@
           <p>this.setState replacement</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function Example() {
-              // Declare a new state variable, which we'll call "count"
               const [count, setCount] = useState(0);
 
               return (
@@ -399,17 +398,41 @@
             }
           </script></code></pre>
         </section>
+        <section>
+          <p>Common Hooks - useEffect</p>
+          <ul>
+          <li class="fragment">
+            for performing side effects - equivalent for lifecycle methods
+            (componentDidMount, componentDidUpdate, componentWillUnmount)
+          </li>
+          <li class="fragment">
+            shouldComponentUpdate's equivalent is React.memo HOC (does shallow compare
+            of props by default but can pass custom function)
+            <pre
+          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            const Button = React.memo((props) => {
+              // your component
+            }, function areEqual(prevProps, nextProps) { return true });
+          </script></code></pre>
+          </li>
+        </ul>
+        </section>
         <section data-auto-animate>
           <p>Common Hooks - useEffect</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function Example() {
-              const [count, setCount] = useState(0);
-
+            function useUpdateTitle(title) {
               // Similar to componentDidMount and componentDidUpdate:
               useEffect(() => {
                 // Update the document title using the browser API
-                document.title = `You clicked ${count} times`;
-              }, [count]);
+                document.title = title;
+
+              // dependency array - when a dependency changes,
+              }, [title]);
+            }
+
+            function Example() {
+              const [count, setCount] = useState(0);
+              useUpdateTitle(`You clicked ${count} times`)
 
               return (
                 <div>
@@ -433,11 +456,16 @@
                 };
               }
 
-              componentDidMount() {
+              updateTitle() {
                 document.title = `You clicked ${this.state.count} times`;
               }
+
+              componentDidMount() {
+                this.updateTitle()
+              }
+
               componentDidUpdate() {
-                document.title = `You clicked ${this.state.count} times`;
+                this.updateTitle()
               }
 
               render() {
@@ -455,116 +483,29 @@
         </section>
         <section>
           <p>Common Hooks - useEffect</p>
-          <p class="fragment">
-            for performing side effects - equivalent for lifecycle methods
-            (componentDidMount, componentDidUpdate, componentWillUnmount)
-          </p>
-          <p class="fragment">
-            shouldComponentUpdate's equivalent is React.memo (shallowly compares
-            props by default but can pass custom function)
-          </p>
-          <pre
-            class="fragment"
-          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            const Button = React.memo((props) => {
-              // your component
-            }, function areEqual(prevProps, nextProps) { return true });
-          </script></code></pre>
-        </section>
-        <section>
-          <p>Common Hooks - useEffect</p>
           <p>
             Instead of thinking in terms of “mounting” and “updating”, think
-            that effects happen “after render”
+            in terms of effects that happen “after render”
           </p>
         </section>
         <section>
-          <p>Common Hooks - useCallback</p>
-          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function Foo({bar}) {
-              React.useEffect(() => {
-                const options = {bar}
-                buzz(options)
-              }, [bar])
-
-              return <div>foobar</div>
-            }
-            function Blub() {
-              const bar = React.useCallback(() => {}, [])
-              return <Foo bar={bar} />
-            }
-          </script></code></pre>
+          <p>Common Hooks - useRef</p>
           <ul>
             <li class="fragment">
-              Returns a memoized callback (callback that only changes if one of
-              the dependencies has changed)
+              Used to hold a mutable value (or function) that persists render to
+              render and, when changed, does NOT trigger a re-render.
             </li>
             <li class="fragment">
-              Despite name, only use when referential equality is a concern
-            </li>
-          </ul>
-        </section>
-        <section>
-          <p>Common Hooks - useCallback</p>
-          <p>callback ref</p>
-          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function MeasureExample() {
-              const [rect, ref] = useClientRect();
-              return (
-                <>
-                  <h1 ref={ref}>Hello, world</h1>
-                  {rect !== null &&
-                    <h2>The above header is {Math.round(rect.height)}px tall</h2>
-                  }
-                </>
-              );
-            }
-
-            function useClientRect() {
-              const [rect, setRect] = useState(null);
-              const ref = useCallback(node => {
-                if (node !== null) {
-                  setRect(node.getBoundingClientRect());
-                }
-              }, []);
-              return [rect, ref];
-            }
-          </script></code></pre>
-        </section>
-        <section>
-          <p>Common Hooks - useCallback</p>
-          <ul>
-            <li class="fragment">
-              Used as a callback ref - run some code when React attaches or
-              detaches a ref to a DOM node
+              Can be thought of as class instance variables / methods
             </li>
             <li class="fragment">
-              useRef doesn’t notify us about changes to the current ref value
-            </li>
-            <li class="fragment">useful for measuring DOM nodes</li>
-          </ul>
-        </section>
-        <section>
-          <p>Common Hooks - useMemo</p>
-          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function RenderPrimes({iterations, multiplier}) {
-              const primes = React.useMemo(() => calculatePrimes(iterations, multiplier), [
-                iterations,
-                multiplier,
-              ])
-              return <div>Primes! {primes}</div>
-            }
-          </script></code></pre>
-          <ul>
-            <li class="fragment">
-              used to memoize computationally expensive calculations
+              Useful for working with web apis (setInterval, addEventListener)
             </li>
           </ul>
         </section>
         <section>
           <p>Common Hooks - useRef</p>
           <pre
-            class="fragment"
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function Counter() {
               const [count, setCount] = useState(0);
@@ -596,23 +537,7 @@
         </section>
         <section>
           <p>Common Hooks - useRef</p>
-          <ul>
-            <li class="fragment">
-              Used to hold a mutable value (or function) that persists render to
-              render and, when changed, does NOT trigger a re-render.
-            </li>
-            <li class="fragment">
-              Can be thought of as class instance variables / methods
-            </li>
-            <li class="fragment">
-              Useful for working with web apis (setInterval, addEventListener)
-            </li>
-          </ul>
-        </section>
-        <section>
-          <p>Common Hooks - useRef</p>
           <pre
-            class="fragment"
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             export function useOnScroll({
               onScroll,
@@ -643,9 +568,8 @@
         </section>
         <section>
           <p>Common Hooks - useRef</p>
-          <p class="fragment">previous props or state</p>
+          <p>previous props or state</p>
           <pre
-            class="fragment"
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function Counter() {
               const [count, setCount] = useState(0);
@@ -661,6 +585,88 @@
               return ref.current;
             }
           </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useCallback</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function Foo({bar}) {
+              React.useEffect(() => {
+                const options = {bar}
+                buzz(options)
+              }, [bar])
+
+              return <div>foobar</div>
+            }
+            function Blub() {
+              const bar = React.useCallback(() => {}, [])
+              return <Foo bar={bar} />
+            }
+          </script></code></pre>
+          <ul>
+            <li>
+              Returns a memoized callback (callback that only changes if one of
+              the dependencies has changed)
+            </li>
+            <li>
+              Despite name, only use when referential equality is a concern
+            </li>
+          </ul>
+        </section>
+        <section>
+          <p>Common Hooks - useCallback (callback ref)</p>
+          <ul>
+            <li class="fragment">
+              Run some code when React attaches or
+              detaches a ref to a DOM node
+            </li>
+            <li class="fragment">
+              useRef doesn’t notify us about changes to the current ref value
+            </li>
+            <li class="fragment">useful for measuring DOM nodes</li>
+          </ul>
+        </section>
+        <section>
+          <p>Common Hooks - useCallback (callback ref)</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function useClientRect() {
+              const [rect, setRect] = useState(null);
+              const ref = useCallback(node => {
+                if (node !== null) {
+                  setRect(node.getBoundingClientRect());
+                }
+              }, []);
+              return [rect, ref];
+            }
+
+            function MeasureExample() {
+              const [rect, ref] = useClientRect();
+              return (
+                <>
+                  <h1 ref={ref}>Hello, world</h1>
+                  {rect !== null &&
+                    <h2>The above header is {Math.round(rect.height)}px tall</h2>
+                  }
+                </>
+              );
+            }
+          </script></code></pre>
+        </section>
+        <section>
+          <p>Common Hooks - useMemo</p>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function RenderPrimes({iterations, multiplier}) {
+              const primes = React.useMemo(() => calculatePrimes(iterations, multiplier), [
+                iterations,
+                multiplier,
+              ])
+              return <div>Primes! {primes}</div>
+            }
+          </script></code></pre>
+          <ul>
+            <li>
+              used to memoize computationally expensive calculations
+            </li>
+          </ul>
         </section>
         <section>
           <p>Best Practices</p>
@@ -815,7 +821,7 @@
           <p>Best Practices - Rules of Hooks</p>
           <ul>
             <li class="fragment">
-              Only call hooks at the Top Level - no loops, conditions, callback
+              Only call hooks at the top level - no loops, conditions, callback
               functions [place all hooks together at the top of a component]
             </li>
             <li class="fragment">
@@ -831,20 +837,20 @@
           </ul>
         </section>
         <section data-auto-animate>
-          <p>Exercises (10 mins)</p>
+          <p>Exercises</p>
           <ul>
             <li>
-              <a href="https://codesandbox.io/s/class-to-hooks-xsdqr"
+              <a target="_blank" https://codesandbox.io/s/class-to-hooks-xsdqr"
                 >Class to Hooks</a
               >: https://codesandbox.io/s/class-to-hooks-xsdqr
             </li>
             <li>
-              <a href="https://codesandbox.io/s/custom-hook-gt0k9"
+              <a target="_blank" https://codesandbox.io/s/custom-hook-gt0k9"
                 >Custom Hook</a
               >: https://codesandbox.io/s/custom-hook-gt0k9
             </li>
             <li>
-              <a href="https://codesandbox.io/s/unwrap-render-props-mc2px"
+              <a target="_blank" https://codesandbox.io/s/unwrap-render-props-mc2px"
                 >Unwrapping Render Props using Hooks</a
               >: https://codesandbox.io/s/unwrap-render-props-mc2px
             </li>
@@ -854,18 +860,18 @@
           <p>Solutions</p>
           <ul>
             <li>
-              <a href="https://codesandbox.io/s/class-to-hooks-solution-1lkv5"
+              <a target="_blank" href="https://codesandbox.io/s/class-to-hooks-solution-1lkv5"
                 >Class to Hooks</a
               >: https://codesandbox.io/s/class-to-hooks-solution-1lkv5
             </li>
             <li>
-              <a href="https://codesandbox.io/s/custom-hook-solution-zpoki"
+              <a target="_blank" href="https://codesandbox.io/s/custom-hook-solution-zpoki"
                 >Custom Hook</a
               >: https://codesandbox.io/s/custom-hook-solution-zpoki
             </li>
             <li>
               <a
-                href="https://codesandbox.io/s/unwrap-render-props-solution-dcsz6"
+                target="_blank" href="https://codesandbox.io/s/unwrap-render-props-solution-dcsz6"
                 >Unwrapping Render Props using Hooks</a
               >: https://codesandbox.io/s/unwrap-render-props-solution-dcsz6
             </li>
@@ -876,7 +882,7 @@
           <p>Questions?</p>
           <p>
             Quinton Aiken, Cypress.io,
-            <a href="https://twitter.com/QuintonAiken">@QuintonAiken</a>
+            <a target="_blank" href="https://twitter.com/QuintonAiken">@QuintonAiken</a>
           </p>
         </section>
       </div>
