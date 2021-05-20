@@ -530,13 +530,16 @@
                 }
 
                 let id = setInterval(tick, delay);
+                // cleanup function
                 return () => clearInterval(id);
               }, [delay]);
             }
 
             function Counter() {
               const [count, setCount] = useState(0);
+              // memoized callback
               const onInterval = useCallback(() => {
+                // function instead of value to get current count
                 setCount((count) => count + 1)
               }, [])
 
