@@ -45,7 +45,7 @@
             <li class="fragment">Thinking in Hooks</li>
             <li class="fragment">Common Hooks</li>
             <li class="fragment">Best Practices</li>
-            <li class="fragment">Exercises & Questions</li>
+            <li class="fragment">Exercises</li>
           </ul>
         </section>
         <section>
@@ -88,10 +88,20 @@
               just functions
             </li>
             <li class="fragment">
-              class components have <b>lifecycle methods</b> (render,
+              class components have <b>state</b> and <b>lifecycle methods</b> (render,
               componentDidMount, componentDidUpdate, etc)
             </li>
-            <li class="fragment">function components were <b>stateless</b></li>
+            <li class="fragment">function components are <b>method-less</b> and were <b>stateless</b></li>
+          </ul>
+        </section>
+        <section>
+          <p>
+            What is the difference between a class component and a function
+            component?
+          </p>
+          <p>(Common interview question)</p>
+          <ul>
+            <li>function components used for presentational / "dumb" (just props) components</li>
             <li class="fragment">confusion around when to write functions or classes for UI components [No performance benefits. Start with function. Need to add state later? Refactor to class.]</b></li>
           </ul>
         </section>
@@ -165,8 +175,7 @@
           <p>Syntactic Benefits:</p>
           <ul>
             <li class="fragment">
-              no more deciding whether to write a function or a class component
-              / convert later
+              no more deciding whether to write a function component (and convert later) or a class component
             </li>
             <li class="fragment">
               allows us to ditch all uses of <i>this</i>, and
@@ -215,7 +224,7 @@
             </li>
             <li class="fragment">
               problems with nesting components within multiple render prop
-              callbacks: <i>render props callback hell</i>
+              callbacks: <i>render props callback hell / pyramid of doom</i>
             </li>
           </ul>
         </section>
@@ -259,7 +268,7 @@
 
             <DetectCity />
           </script></code></pre>
-          <p class="fragment">Render props callback hell</p>
+          <p>Render props callback hell / pyramid of doom</p>
         </section>
         <section>
           <p>Higher Order Components (HOCs)</p>
@@ -268,7 +277,7 @@
               a higher-order component is a function that takes a component and
               returns a new component.
             </li>
-            <li class="fragment">can I have nested HOCs?</li>
+            <li class="fragment">problems with nesting components within multiple HOCs: component hierarchy hell / pyramid of doom</li>
           </ul>
         </section>
         <section>
@@ -344,7 +353,7 @@
             }
           </script></code></pre>
           <ul>
-            <li>hidden component hierarchy hell</li>
+            <li>hidden component hierarchy hell / pyramid of doom</li>
             <li class="fragment">
               does order matter? where do I put another HOC?
             </li>
@@ -406,14 +415,18 @@
             (componentDidMount, componentDidUpdate, componentWillUnmount)
           </li>
           <li class="fragment">
-            shouldComponentUpdate's equivalent is React.memo HOC (does shallow compare
-            of props by default but can pass custom function)
+            shouldComponentUpdate's equivalent is React.memo HOC
             <pre
-          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            const Button = React.memo((props) => {
-              // your component
-            }, function areEqual(prevProps, nextProps) { return true });
-          </script></code></pre>
+            ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+              const Button = React.memo((props) => {
+                // your component
+              }, function areEqual(prevProps, nextProps) { return true });
+            </script></code></pre>
+            <ul>
+              <li>does shallow compare
+                of props by default but can pass custom function</li>
+              <li>can't be a hook because it prevents re-rendering, hooks are part of render cycle</li>
+            </ul>
           </li>
         </ul>
         </section>
@@ -427,6 +440,7 @@
                 document.title = title;
 
               // dependency array - when a dependency changes,
+              // our effect will trigger
               }, [title]);
             }
 
@@ -464,8 +478,10 @@
                 this.updateTitle()
               }
 
-              componentDidUpdate() {
-                this.updateTitle()
+              componentDidUpdate(prevProps, prevState) {
+                if (prevState.count !== this.state.count) {
+                  this.updateTitle()
+                }
               }
 
               render() {
@@ -480,13 +496,6 @@
               }
             }
           </script></code></pre>
-        </section>
-        <section>
-          <p>Common Hooks - useEffect</p>
-          <p>
-            Instead of thinking in terms of “mounting” and “updating”, think
-            in terms of effects that happen “after render”
-          </p>
         </section>
         <section>
           <p>Common Hooks - useRef</p>
@@ -507,22 +516,13 @@
           <p>Common Hooks - useRef</p>
           <pre
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function Counter() {
-              const [count, setCount] = useState(0);
-
-              useInterval(() => {
-                setCount(count + 1);
-              }, 1000);
-
-              return <h1>{count}</h1>;
-            }
-
             function useInterval(callback, delay) {
-              const savedCallback = useRef();
+              // {current: callback}
+              const savedCallback = useRef(callback);
 
               useEffect(() => {
                 savedCallback.current = callback;
-              });
+              }, [callback]);
 
               useEffect(() => {
                 function tick() {
@@ -532,6 +532,17 @@
                 let id = setInterval(tick, delay);
                 return () => clearInterval(id);
               }, [delay]);
+            }
+
+            function Counter() {
+              const [count, setCount] = useState(0);
+              const onInterval = useCallback(() => {
+                setCount((count) => count + 1)
+              }, [])
+
+              useInterval(onInterval, 1000);
+
+              return <h1>{count}</h1>;
             }
           </script></code></pre>
         </section>
@@ -546,7 +557,7 @@
               onScroll(): void;
               delay?: number;
             }) {
-              const debouncedOnScroll = React.useRef(() => {});
+              const debouncedOnScroll = React.useRef();
 
               React.useEffect(() => {
                 debouncedOnScroll.current = debounce(onScroll, delay);
@@ -571,18 +582,18 @@
           <p>previous props or state</p>
           <pre
           ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function Counter() {
-              const [count, setCount] = useState(0);
-              const prevCount = usePrevious(count);
-              return <h1>Now: {count}, before: {prevCount}</h1>;
-            }
-
             function usePrevious(value) {
               const ref = useRef();
               useEffect(() => {
                 ref.current = value;
               });
               return ref.current;
+            }
+
+            function Counter() {
+              const [count, setCount] = useState(0);
+              const prevCount = usePrevious(count);
+              return <h1>Now: {count}, before: {prevCount}</h1>;
             }
           </script></code></pre>
         </section>
@@ -598,6 +609,7 @@
               return <div>foobar</div>
             }
             function Blub() {
+              // const bar = () => {}
               const bar = React.useCallback(() => {}, [])
               return <Foo bar={bar} />
             }
@@ -622,7 +634,6 @@
             <li class="fragment">
               useRef doesn’t notify us about changes to the current ref value
             </li>
-            <li class="fragment">useful for measuring DOM nodes</li>
           </ul>
         </section>
         <section>
@@ -655,6 +666,7 @@
           <p>Common Hooks - useMemo</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function RenderPrimes({iterations, multiplier}) {
+              // const primes = calculatePrimes(iterations, multiplier)
               const primes = React.useMemo(() => calculatePrimes(iterations, multiplier), [
                 iterations,
                 multiplier,
@@ -712,7 +724,7 @@
           <p>Best Practices - useEffect</p>
           <ul>
             <li class="fragment">
-              Hooks should be small and contain related logic. Don't just have
+              Hooks should be small, contain related logic and do one thing. Don't just have
               one useEffect hook and put everything in it!
             </li>
             <li class="fragment">
@@ -725,7 +737,7 @@
           <p>Best Practices - useEffect</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             useEffect(() => {
-              //logic around a, b
+              //logic around a,b
 
               //logic around c,d,e
 
@@ -829,10 +841,10 @@
               and custom Hooks
             </li>
             <li class="fragment">
-              Use the eslint-plugin-react-hooks to enforce these two rules
+              Custom hooks should start with 'use' as a prefix
             </li>
             <li class="fragment">
-              Custom hooks should start with 'use' as a prefix
+              Use the eslint-plugin-react-hooks to enforce rules of hooks
             </li>
           </ul>
         </section>
@@ -840,17 +852,17 @@
           <p>Exercises</p>
           <ul>
             <li>
-              <a target="_blank" https://codesandbox.io/s/class-to-hooks-xsdqr"
+              <a target="_blank" href="https://codesandbox.io/s/class-to-hooks-xsdqr"
                 >Class to Hooks</a
               >: https://codesandbox.io/s/class-to-hooks-xsdqr
             </li>
             <li>
-              <a target="_blank" https://codesandbox.io/s/custom-hook-gt0k9"
+              <a target="_blank" href="https://codesandbox.io/s/custom-hook-gt0k9"
                 >Custom Hook</a
               >: https://codesandbox.io/s/custom-hook-gt0k9
             </li>
             <li>
-              <a target="_blank" https://codesandbox.io/s/unwrap-render-props-mc2px"
+              <a target="_blank" href="https://codesandbox.io/s/unwrap-render-props-mc2px"
                 >Unwrapping Render Props using Hooks</a
               >: https://codesandbox.io/s/unwrap-render-props-mc2px
             </li>
