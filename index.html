@@ -375,7 +375,10 @@
               return (
                 <div>
                   <p>You clicked {count} times</p>
-                  <button onClick={() => setCount(count + 1)}>
+                  <button onClick={() => {
+                      setCount(count + 1)
+                      // setCount(count => count + 1)
+                  }}>
                     Click me
                   </button>
                 </div>
@@ -438,6 +441,11 @@
               useEffect(() => {
                 // Update the document title using the browser API
                 document.title = title;
+
+                // clean up side effects from previous effect
+                return () => {
+                  console.log('clean up')
+                }
 
               // dependency array - when a dependency changes,
               // our effect will trigger
@@ -542,6 +550,8 @@
                 // function instead of value to get current count
                 setCount((count) => count + 1)
               }, [])
+              // const onInterval = () => setCount((count) => count + 1)
+
 
               useInterval(onInterval, 1000);
 
@@ -635,7 +645,7 @@
               detaches a ref to a DOM node
             </li>
             <li class="fragment">
-              useRef doesn’t notify us about changes to the current ref value
+              useRef (often used incorrectly for this) doesn’t notify us about changes to the current ref value
             </li>
           </ul>
         </section>
@@ -643,9 +653,10 @@
           <p>Common Hooks - useCallback (callback ref)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function useClientRect() {
-              const [rect, setRect] = useState(null);
+              const [rect, setRect] = useState({});
               const ref = useCallback(node => {
                 if (node !== null) {
+                  // {height: 240, left: 142.5, top: 50, width: 440}
                   setRect(node.getBoundingClientRect());
                 }
               }, []);
@@ -720,7 +731,7 @@
 
             useEffect(() => {
               document.title = `You clicked ${count} times`;
-            }, [count]); // Only re-run the effect if count changes
+            }, [count]); // Only re-run the effect if one of the dependencies change
           </script></code></pre>
         </section>
         <section>
@@ -847,7 +858,7 @@
               Custom hooks should start with 'use' as a prefix
             </li>
             <li class="fragment">
-              Use the eslint-plugin-react-hooks to enforce rules of hooks
+              Use the react-hooks eslint plugin to enforce rules of hooks
             </li>
           </ul>
         </section>
