@@ -45,6 +45,7 @@
             <li class="fragment">Thinking in Hooks</li>
             <li class="fragment">Common Hooks</li>
             <li class="fragment">Best Practices</li>
+            <li class="fragment">Answering Questions</li>
             <li class="fragment">Exercises</li>
           </ul>
         </section>
@@ -148,11 +149,11 @@
                 setName(e.target.value);
               };
 
-              return {handleNameInput, name}
+              return [name, handleNameInput]
             }
 
             function App() {
-              const {name, handleNameInput} = useNameInput('')
+              const [name, handleNameInput] = useNameInput('')
 
               return (
                 <div>
@@ -196,6 +197,12 @@
         <section>
           <img src="./img/hooks.gif" />
           <a href="https://twitter.com/prchdk">@prchdk</a>
+        </section>
+        <section>
+          <div style="display:flex; align-items: center; justify-content: center;">
+          <img style="max-width: 400px;" src="./img/before.png" />
+          <img style="max-width: 400px;" src="./img/after.png" />
+        </div>
         </section>
         <section>
           <p>Logical Benefits:</p>
