@@ -705,30 +705,9 @@
           <p>Best Practices</p>
         </section>
         <section>
-          <p>Best Practices - useState</p>
+          <p>Best Practices - dependency arrays </p>
           <p class="fragment">
-            split state into multiple state variables based on which values tend
-            to change together
-          </p>
-          <pre
-            class="fragment"
-          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-          //instead of this...
-          const [state, setState] = useState({ left: 0, top: 0, width: 100, height: 100 });
-          setState(state => ({ ...state, left: e.pageX, top: e.pageY }));
-        </script></code></pre>
-          <pre
-            class="fragment"
-          ><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            //do this
-            const [position, setPosition] = useState({ left: 0, top: 0 });
-            const [size, setSize] = useState({ width: 100, height: 100 });
-          </script></code></pre>
-        </section>
-        <section>
-          <p>Best Practices - useEffect</p>
-          <p class="fragment">
-            Optimize performance by using dependency array and skipping effects
+            Optimize performance by using dependency arrays and skipping effects
           </p>
           <pre
             class="fragment"
@@ -742,7 +721,7 @@
           </script></code></pre>
         </section>
         <section>
-          <p>Best Practices - useEffect</p>
+          <p>Best Practices - dependency arrays</p>
           <ul>
             <li class="fragment">
               Hooks should be small, contain related logic and do one thing. Don't just have
@@ -755,7 +734,7 @@
           </ul>
         </section>
         <section data-auto-animate>
-          <p>Best Practices - useEffect</p>
+          <p>Best Practices - dependency arrays</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             useEffect(() => {
               //logic around a,b
@@ -767,7 +746,7 @@
           </script></code></pre>
         </section>
         <section data-auto-animate>
-          <p>Best Practices - useEffect</p>
+          <p>Best Practices - dependency arrays</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             useEffect(() => {
               //logic around a, b
@@ -783,7 +762,7 @@
           </script></code></pre>
         </section>
         <section data-auto-animate>
-          <p>Best Practices - useEffect</p>
+          <p>Best Practices - dependency arrays</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             const useFoo = (a, b) => {
               useEffect(() => {
@@ -868,6 +847,9 @@
               Use the react-hooks eslint plugin to enforce rules of hooks
             </li>
           </ul>
+        </section>
+        <section data-auto-animate>
+          <p>Answering Questions</p>
         </section>
         <section data-auto-animate>
           <p>Exercises</p>
