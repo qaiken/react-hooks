@@ -220,14 +220,13 @@
           <p>Render Props</p>
           <ul>
             <li class="fragment">
-              A component with a render prop takes a function that returns a
-              React element and calls it instead of implementing its own render
+              A component with a function prop that returns a
+              React element which the component calls instead of implementing its own render
               logic
             </li>
             <li class="fragment">
-              Hard to distinguish between UI components and render-prop
-              components that are used for sharing logic [components used for
-              logic reuse, UI reuse and mixture of both]
+              Hard to distinguish between render-prop
+              components that are used for sharing logic, sharing UI, or both
             </li>
             <li class="fragment">
               problems with nesting components within multiple render prop
@@ -833,7 +832,7 @@
           <p>Best Practices - Rules of Hooks</p>
           <ul>
             <li class="fragment">
-              Only call hooks at the top level - no loops, conditions, callback
+              Only call hooks at the top level - not in loops, conditionals, callback
               functions [place all hooks together at the top of a component]
             </li>
             <li class="fragment">
