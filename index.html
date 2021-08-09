@@ -654,25 +654,31 @@
         <section>
           <p>Common Hooks - useCallback (callback ref)</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function useClientRect() {
-              const [rect, setRect] = useState({});
-              const ref = useCallback(node => {
+            function MeasureExample() {
+              const [show, setShow] = useState(false);
+              const [height, setHeight] = useState(0);
+
+              // Because our ref is a callback, it still works
+              // even if the ref only gets attached after button
+              // click.
+              const measureRef = useCallback(node => {
                 if (node !== null) {
-                  // {height: 240, left: 142.5, top: 50, width: 440}
-                  setRect(node.getBoundingClientRect());
+                  setHeight(node.getBoundingClientRect().height);
                 }
               }, []);
-              return [rect, ref];
-            }
 
-            function MeasureExample() {
-              const [rect, ref] = useClientRect();
+              if (!show) {
+                return (
+                  <button onClick={() => setShow(true)}>
+                    Show child
+                  </button>
+                );
+              }
+
               return (
                 <>
-                  <h1 ref={ref}>Hello, world</h1>
-                  {rect !== null &&
-                    <h2>The above header is {Math.round(rect.height)}px tall</h2>
-                  }
+                  <h1 ref={measureRef}>Hello, world</h1>
+                  <h2>The above header is {Math.round(height)}px tall</h2>
                 </>
               );
             }
