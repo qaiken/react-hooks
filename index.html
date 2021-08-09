@@ -765,7 +765,7 @@
         <section data-auto-animate>
           <p>Best Practices - dependency arrays</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            const useFoo = (a, b) => {
+            const useFoo = (a, b, f) => {
               useEffect(() => {
                 //logic around a, b
               }, [a,b]);
