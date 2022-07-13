@@ -208,7 +208,10 @@
           <ul>
             <li class="fragment">
               results in extremely simplified code composition and reuse. no
-              more render props or HOCs for shared logic
+              more components (render props or HOCs) for shared logic.
+            </li>
+            <li class="fragment">
+              components === UI && hooks === logic
             </li>
           </ul>
         </section>
@@ -216,7 +219,7 @@
           <p>Render Props</p>
           <ul>
             <li class="fragment">
-              A component with a function prop that returns a
+              A component with a function prop (usually called render) that returns a
               React element which the component calls instead of implementing its own render
               logic
             </li>
@@ -225,7 +228,7 @@
               components that are used for sharing logic, sharing UI, or both
             </li>
             <li class="fragment">
-              problems with nesting components within multiple render prop
+              Problems with nesting components within multiple render prop
               callbacks: <i>render props callback hell / pyramid of doom</i>
             </li>
           </ul>
@@ -275,11 +278,14 @@
         <section>
           <p>Higher Order Components (HOCs)</p>
           <ul>
-            <li>
-              a higher-order component is a function that takes a component and
+            <li class="fragment">
+              A function that takes a component and
               returns a new component.
             </li>
-            <li class="fragment">problems with nesting components within multiple HOCs: component hierarchy hell / pyramid of doom</li>
+            <li class="fragment">
+              Hard to distinguish between HOCs that are used for sharing logic, sharing UI, or both
+            </li>
+            <li class="fragment">Problems with nesting components within multiple HOCs: component hierarchy hell / pyramid of doom</li>
           </ul>
         </section>
         <section>
@@ -685,6 +691,38 @@
           </script></code></pre>
         </section>
         <section>
+          <p>Common Hooks - useCallback (callback ref)</p>
+          <ul>
+            <li>
+              Don't do this! It will have a delay!
+            </li>
+          </ul>
+          <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
+            function MeasureExample() {
+              const [show, setShow] = useState(false);
+              const [height, setHeight] = useState(0);
+              const measureRef = useRef();
+
+              useEffect(() => {
+                if (measureRef.current) {
+                  setHeight(measureRef.current.getBoundingClientRect().height);
+                }
+              });
+
+              if (!show) {
+                return <button onClick={() => setShow(true)}>Show child</button>;
+              }
+
+              return (
+                <>
+                  <h1 ref={measureRef}>Hello, world</h1>
+                  <h2>The above header is {Math.round(height)}px tall</h2>
+                </>
+              );
+            }
+          </script></code></pre>
+        </section>
+        <section>
           <p>Common Hooks - useMemo</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function RenderPrimes({iterations, multiplier}) {
@@ -820,7 +858,7 @@
           <p>Best Practices - Custom Hooks</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function FriendListItem(props) {
-              const isOnline = useFriendStatus(props.friend.id);
+              const { isOnline } = useFriendStatus(props.friend.id);
 
               return (
                 <li style={{ color: isOnline ? 'green' : 'black' }}>
@@ -839,7 +877,7 @@
             </li>
             <li class="fragment">
               Only call hooks from react functions - React function components
-              and custom Hooks
+              and custom hooks (part of the render lifecycle)
             </li>
             <li class="fragment">
               Custom hooks should start with 'use' as a prefix
