@@ -101,7 +101,7 @@
           </p>
           <p>(Common interview question)</p>
           <ul>
-            <li>function components used for presentational / "dumb" (just props) components</li>
+            <li>Historically, function components were used for presentational / "dumb" (just props) components</li>
             <li class="fragment">confusion around when to write functions or classes for UI components [No performance benefits. Start with function. Need to add state later? Refactor to class.]</b></li>
           </ul>
         </section>
@@ -141,18 +141,20 @@
         </section>
         <section>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
-            function useNameInput(initialName) {
+            function useName(initialName) {
               const [name, setName] = useState(initialName);
 
               const handleNameInput = e => {
                 setName(e.target.value);
               };
 
-              return [name, handleNameInput]
+              const alertName = () => alert(name)
+
+              return {name, handleNameInput, alertName}
             }
 
             function App() {
-              const [name, handleNameInput] = useNameInput('')
+              const {name, handleNameInput, alertName} = useName('')
 
               return (
                 <div>
@@ -163,7 +165,7 @@
                     value={name}
                     placeholder="Your Name"
                   />
-                  <button onClick={() => alert(name)}>
+                  <button onClick={alertName}>
                     Alert
                   </button>
                 </div>
@@ -362,7 +364,7 @@
           </script></code></pre>
           <ul>
             <li>hidden component hierarchy hell / pyramid of doom</li>
-            <li class="fragment">
+            <li>
               does order matter? where do I put another HOC?
             </li>
           </ul>
@@ -445,12 +447,12 @@
           <p>Common Hooks - useEffect</p>
           <pre><code class="hljs javascript" data-trim data-line-numbers><script type="text/template">
             function useUpdateTitle(title) {
-              // Similar to componentDidMount and componentDidUpdate:
+              // Similar to componentDidMount, componentDidUpdate and componentWillUnmount:
               useEffect(() => {
                 // Update the document title using the browser API
                 document.title = title;
 
-                // clean up side effects from previous effect
+                // clean up side effects from previous effect and on un-mount
                 return () => {
                   console.log('clean up')
                 }
@@ -524,7 +526,7 @@
               Can be thought of as class instance variables / methods
             </li>
             <li class="fragment">
-              Useful for working with web apis (setInterval, addEventListener)
+              Useful for working with web APIs (setInterval, addEventListener)
             </li>
           </ul>
         </section>
@@ -537,6 +539,7 @@
               const savedCallback = useRef(callback);
 
               useEffect(() => {
+                // does not trigger a re-render!
                 savedCallback.current = callback;
               }, [callback]);
 
@@ -606,6 +609,7 @@
             function usePrevious(value) {
               const ref = useRef();
               useEffect(() => {
+                // called after render and does not trigger a re-render!
                 ref.current = value;
               });
               return ref.current;
